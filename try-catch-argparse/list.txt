@@ -1,0 +1,5 @@
+Windows 7
+Windows 10
+Linux
+Solaris
+HP-UX
