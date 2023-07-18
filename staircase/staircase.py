@@ -11,6 +11,10 @@ import sys
 #
 # The function accepts INTEGER n as parameter.
 #
+# This will print in below format
+#    #
+#   ##
+#  ###
 
 def staircase(num_stairs):
     n = num_stairs - 2

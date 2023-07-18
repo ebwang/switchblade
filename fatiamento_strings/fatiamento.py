@@ -1,4 +1,5 @@
 #Quebrando a url entre a base e os parametros passados
+#Slicing url
 url = "bytebank.com/cambio?quantidade=100&moedaOrigem=real&moedaDestino=dolar".lower()
 indice_interrogacao = url.find('?')
 url_base = url[:indice_interrogacao]
