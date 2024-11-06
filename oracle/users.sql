@@ -1,3 +1,15 @@
+-- CREATE USERS
+CREATE USER HR_OFFICER IDENTIFIED BY ABcd##1234 DEFAULT TABLESPACE USERS; 
+CREATE USER HR_REPORTER IDENTIFIED BY ABcd##1234 DEFAULT TABLESPACE USERS; 
+
+CREATE ROLE HR_OFFICER_ROLE; 
+CREATE ROLE HR_REPORTER_ROLE; 
+
+-- View roles are created.
+col ROLE for a18 
+SELECT ROLE, PASSWORD_REQUIRED, AUTHENTICATION_TYPE  
+FROM DBA_ROLES WHERE ROLE IN ('HR_OFFICER_ROLE', 'HR_REPORTER_ROLE'); 
+
 -- start with HR_OFFICER_ROLE -- grant the required system privileges 
 GRANT CREATE SESSION, CREATE SYNONYM TO HR_OFFICER_ROLE; 
  -- grant the required object privileges to the role: 
@@ -39,3 +51,19 @@ col GRANTED_ROLE for a20
 SELECT GRANTEE , GRANTED_ROLE FROM DBA_ROLE_PRIVS WHERE GRANTEE IN 
 ('HR_OFFICER', 'HR_REPORTER') 
 ORDER BY 1,2; 
+
+
+-- As it is shown in the preceding example, the user needs to access the object using the format <schema 
+-- name>.<object name>. This method is impractical, especially when we have dozens of tables to be 
+-- seen. One solution to this challenge is by creating synonyms.
+
+
+-- View all common users from database
+set pagesize 80 
+col username format a30 
+SELECT DISTINCT USERNAME, ORACLE_MAINTAINED  
+FROM CDB_USERS WHERE COMMON='YES'  
+ORDER BY 1; 
+
+-- to view full name of the password file being used
+select file_name from v$PASSWORDFILE
