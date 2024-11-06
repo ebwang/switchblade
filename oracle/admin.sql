@@ -9,13 +9,14 @@ SELECT NAME, OPEN_MODE FROM V$PDBS ORDER BY 1;
 #Start PDB
 ALTER PLUGGABLE DATABASE pdb1 OPEN; 
 STARTUP PLUGGABLE DATABASE pdb1;
+STARTUP PLUGGABLE DATABASE hr;
 
 ----------------------------------------------------------------------------------------
 #Alter Session
 ALTER SESSION SET CONTAINER=PDB; 
 ALTER SESSION SET CONTAINER=CDB$ROOT; 
 
-sqlplus HR/modafoca@NTB-WANG:1539/PDB
+sqlplus HR/ABcd##1234@NTB-WANG:1539/PDB
 ----------------------------------------------------------------------------------------
 #View parameter is modifable in PDB
 SELECT VALUE, VALUE/1024/1024/1024 GB, ISPDB_MODIFIABLE 
@@ -45,6 +46,11 @@ ALTER SYSTEM SET DDL_LOCK_TIMEOUT = 12;
 CREATE PLUGGABLE DATABASE pdb_test  
 ADMIN USER pdbtestadmin IDENTIFIED BY ABcd##1234; 
 ALTER PLUGGABLE DATABASE pdb_test OPEN;
+
+----------------------------------------------------------------------------------------
+
+CREATE PLUGGABLE DATABASE HR ADMIN USER dba IDENTIFIED BY ABcd##1234; 
+ALTER PLUGGABLE DATABASE HR OPEN;
 
 ----------------------------------------------------------------------------------------
 #Put in restrict mode
@@ -101,7 +107,7 @@ ALTER SESSION SET CONTAINER=PDB;
 @ $ORACLE_HOME/demo/schema/human_resources/hr_main.sql 
 
 ----------------------------------------------------------------------------------------
-#Retrieve the tables owned by the HR user in PDB
+-- Retrieve the tables owned by the HR user in PDB
 col TABLE_NAME for a25  
 SELECT CON_ID, T.TABLE_NAME  
 FROM CDB_TABLES T  
