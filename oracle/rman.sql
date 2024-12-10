@@ -40,6 +40,10 @@ DELETE BACKUPSET OF DATABASE;
 
 --Will backup archive redo, log backup and control file in auto-backup
 BACKUP DATABASE PLUS ARCHIVELOG; 
+backup database tag "CDB_FULL" PLUS ARCHIVELOG TAG "ARCH_FULL";
+
+-- To backup only one pdb
+ackup pluggable database hr tag "HR_FULL";
 
 -- View archive log files included in the backup
 SELECT NAME, SEQUENCE# FROM V$ARCHIVED_LOG ORDER BY 2; 
@@ -81,3 +85,37 @@ WHERE ts.NAME = 'USERS';
 sqlplus / as sysdba 
 SHOW PARAMETER CONTROL_FILE_RECORD_KEEP_TIME 
 ALTER SYSTEM SET CONTROL_FILE_RECORD_KEEP_TIME=60 SCOPE=BOTH; 
+
+
+-- RESTORE IN NOARCHIVELOG
+RMAN> SHUTDOWN ABORT;
+RMAN> STARTUP MOUNT;
+RMAN> RESTORE DATABASE;
+-- This command below, verify before doing the restore
+RMAN> RESTORE DATABASE VERIFY;
+RMAN> RESTORE DATABASE;
+RMAN> RECOVER DATABASE NOREDO;
+RMAN> ALTER DATABASE OPEN RESETLOGS;
+
+-- After restore, verify integrity
+select count(*) from dba_tables;
+
+
+-- Validate tablespace users
+VALIDATE TABLESPACE USERS;
+backup tablespace users tag "FULL_USERS"
+
+
+-- To recover the tablespace users
+alter tablespace users offline immediate
+restore tablespace users;
+recover tablespace users;
+alter tablespace users online
+
+
+-- To view which backupsets can be used to restore pluggable database HR
+list backupset of pluggable database hr summary;
+
+recover table HR.EMPLOYEES
+until time "to_date('2024-11-25 20:00:00','YYYY-MM-DD HH24:MI:SS')" 
+auxiliary destination '/u01/app/oracle/auxiliary';

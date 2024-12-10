@@ -1,4 +1,7 @@
-#Close PDB
+-- REPORT ALL DATABASE SCHEMA
+REPORT SCHEMA;
+
+-- Close PDB
 ALTER PLUGGABLE DATABASE pdb1 CLOSE IMMEDIATE; 
 
 ----------------------------------------------------------------------------------------
@@ -72,6 +75,10 @@ SELECT CON_ID, OPEN_MODE, RESTRICTED FROM V$PDBS WHERE NAME='PDB2';
 ALTER PLUGGABLE DATABASE pdb2 CLOSE IMMEDIATE; 
 DROP PLUGGABLE DATABASE pdb2 INCLUDING DATAFILES;
 
+--- TO OPEN PDB EVERY TIME THE CDB OPEN
+
+ALTER PLUGGABLE DATABASE hr SAVE STATE;
+
 ----------------------------------------------------------------------------------------
 #View Con_ID and PDBS NAMES
 SELECT CON_ID, NAME FROM V$CONTAINERS;
@@ -88,7 +95,7 @@ col PROPERTY_VALUE for a35
 SELECT PROPERTY_NAME, PROPERTY_VALUE FROM CDB_PROPERTIES WHERE CON_ID=3;
 
 ----------------------------------------------------------------------------------------
-#Retrieve datafiles of entire database including PDB
+--Retrieve datafiles of entire database including PDB
 COL PDB_ID FOR 999 
 COL PDB_NAME FOR A8 
 COL FILE_ID FOR 9999 
@@ -101,7 +108,7 @@ SELECT p.CON_ID, p.NAME PDB_NAME, d.FILE_ID, d.TABLESPACE_NAME, d.FILE_NAME
 ORDER BY p.CON_ID; 
 
 ----------------------------------------------------------------------------------------
-#To run a script of creation of DATABASE
+--To run a script of creation of DATABASE
 conn / as sysdba 
 ALTER SESSION SET CONTAINER=PDB; 
 @ $ORACLE_HOME/demo/schema/human_resources/hr_main.sql 
@@ -115,7 +122,7 @@ WHERE T.OWNER='HR'
 ORDER BY T.TABLE_NAME;
 
 ----------------------------------------------------------------------------------------
-#Retrieve the tables owned by OWNER HR in entires PDBS
+--Retrieve the tables owned by OWNER HR in entires PDBS
 set linesize 180 
 COL PDB_NAME FOR A15 
 COL OWNER FOR A15 
@@ -128,7 +135,7 @@ SELECT P.PDB_ID, T.OWNER, P.PDB_NAME, T.TABLE_NAME
 ORDER BY P.PDB_ID, T.OWNER; 
 
 ----------------------------------------------------------------------------------------
-#View installed components in DATABASE
+-- View installed components in DATABASE
 set linesize 180 
 col COMP_NAME for a40 
 col STATUS for a15 
@@ -136,5 +143,9 @@ col VERSION for a10
 SELECT COMP_NAME, STATUS, VERSION FROM DBA_REGISTRY ORDER BY 1;
 
 -- Display Control Files
-
 show parameter CONTROL_FILES 
+
+
+-- View datafiles from a pdb
+
+select name from V$datafile where con_id=(select con_id from v$PDBS where name='HR');

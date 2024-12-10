@@ -11,7 +11,7 @@ EOF
 
 
 
-#View tablespace of the TABLE
+-- View tablespace of the TABLE
 SELECT TABLESPACE_NAME FROM USER_TABLES WHERE TABLE_NAME='TEST_TABLE'; 
 
 #View if omf is ENabled
@@ -65,7 +65,7 @@ ORDER BY CON_ID ;
 
 #View tablespace of PDB only
 ALTER SESSION SET CONTAINER=PDB; 
- 
+
 SELECT F.TABLESPACE_NAME 
       ,F.TOTALSPACE "Size MB" 
       , (F.TOTALSPACE - U.TOTALUSEDSPACE) "Free MB" 
